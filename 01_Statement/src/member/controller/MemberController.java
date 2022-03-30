@@ -30,6 +30,19 @@ public class MemberController {
 		return member;
 	}
 
-	
+	public List<Member> selectMulti(String name) {
+		List<Member> list = memberDao.selectMulti(name);
+		return list;
+	}
+
+	public int updateMember(Member member) {
+		int result = memberDao.updateMember(member);
+		return result;
+	}
+
+	public int deleteMember(String id) {
+		int result = memberDao.deleteMember(id);
+		return result;
+	}
 
 }

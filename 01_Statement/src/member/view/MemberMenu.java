@@ -49,28 +49,83 @@ public class MemberMenu {
 				list = controller.selectAll();
 				printMemberList(list);
 				break;
+				
 			case "2" : 
 				id = inputId();
 				member = controller.selectOne(id);
 				printMember(member);
 				break;
+				
 			case "3" :
+				name = inputName();
+				list = controller.selectMulti(name);
+				printMemberList(list);
 				break;
+				
 			case "4" : 
 				newMember = inputMember();
 				result = controller.insertMember(newMember);
 				System.out.println(result > 0 ? "> 회원 가입 완료" : "> 회원 가입 실패");
 				break;
-			case "5" : break;
-			case "6" : break;
+				
+			case "5" :
+				member = inputModify(controller.selectOne(inputId()));
+				if(member != null)
+					result = controller.updateMember(member);
+				System.out.println(result > 0 ? "> 회원정보 변경 완료" : "> 회원정보 변경 실패");
+				break;
+				
+			case "6" :
+				id = inputId();
+				result = controller.deleteMember(id);
+				System.out.println(result > 0 ? "> 회원 탈퇴 완료" : "> 회원 탈퇴 실패");
+				break;
+			
 			case "0" : return;
 			default:
 				System.out.println("잘못 입력하셨습니다.");
 			}
 		}
 	}
-
 	
+	
+
+	private Member inputModify(Member member) {
+
+		// 입력한 아이디의 회원이 있을 때만 변경 할 정보 입력
+		if (member == null) {
+			System.out.println("> 입력하신 아이디의 회원이 없습니다.");
+			return member;
+		} else {
+			System.out.print("이름 : ");
+			String name = sc.next();
+
+			System.out.print("생일(예: 19950401) : ");
+			String tmp_birthday = sc.next();
+			Date birthday = null;
+			try {
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyymmdd");
+				birthday = new Date(sdf.parse(tmp_birthday).getTime()); // java.util.Date -> java.sql.Date
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+
+			System.out.print("이메일 : ");
+			String email = sc.next();
+
+			sc.nextLine(); // 버퍼비우기
+			System.out.print("주소 : ");
+			String address = sc.nextLine();
+
+			return new Member(member.getId(), name, member.getGender(), birthday, email, address, member.getRegDate());
+		}
+	}
+
+	private String inputName() {
+		System.out.println("---------- name 입력 ----------");
+		System.out.print("name : ");
+		return sc.next();
+	}
 
 	/**
 	 * 회원 1명 출력 메소드
@@ -97,7 +152,7 @@ public class MemberMenu {
 	 * 조회할 id를 입력하는 메소드
 	 */
 	private String inputId() {
-		System.out.println("------ 조회할 id 입력 ------");
+		System.out.println("----------- id 입력 -----------");
 		System.out.print("id : ");
 		return sc.next();
 	}
@@ -113,17 +168,17 @@ public class MemberMenu {
 			System.out.println("> 조회된 회원이 없습니다.");
 		else {
 			System.out.println("> 조회결과");
-			System.out.println("===================================================");
-			System.out.printf("%15s%15s%15s%15s%15s%15s%15s%n",
+			System.out.println("==================================================================================================================================");
+			System.out.printf("%15s%10s%10s%15s%20s%20s%30s%n",
 					"id", "name", "gender","birthday", "email", "address", "regDate");
-			System.out.println("---------------------------------------------------");
+			System.out.println("----------------------------------------------------------------------------------------------------------------------------------");
 
 			for (Member m : list) {
-				System.out.printf("%15s%15s%15s%15s%15s%15s%15s%n",
+				System.out.printf("%15s%10s%10s%15s%20s%20s%30s%n",
 						m.getId(), m.getName(), m.getGender(), m.getBirthday(),
 						m.getEmail(), m.getAddress(), m.getRegDate());
 			}
-			System.out.println("---------------------------------------------------");
+			System.out.println("----------------------------------------------------------------------------------------------------------------------------------");
 			System.out.println();
 		}
 	}
