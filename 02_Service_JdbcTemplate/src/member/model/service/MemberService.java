@@ -7,6 +7,7 @@ import static common.JdbcTemplate.getConnection;
 import static common.JdbcTemplate.rollback;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.util.List;
 
 import member.model.dao.MemberDao;
@@ -31,20 +32,18 @@ import member.model.vo.Member;
  */
 public class MemberService {
 
-
-
 	private MemberDao memberDao = new MemberDao();
-	
+
 	public int insertMember(Member member) {
 		int result = 0;
-		
+
 		// 1. Connection 생성
 		Connection conn = getConnection();
-		
+
 		try {
 			// 2. Dao요청
 			result = memberDao.insertMember(conn, member);
-			
+
 			// 3. 트랜잭션처리
 			commit(conn);
 		} catch (Exception e) {
@@ -60,14 +59,121 @@ public class MemberService {
 	public List<Member> findMemberbyName(String name) {
 		// 1. connection 생성
 		Connection conn = getConnection();
-		
+
 		// 2. dao요청
 		List<Member> list = memberDao.findMemberByName(conn, name);
-		
+
 		// 3. 자원반납
 		close(conn);
-		
+
 		return list;
+	}
+
+	public Member findMemberById(String id) {
+
+		Connection conn = getConnection();
+		Member member = memberDao.findMemberById(conn, id);
+		close(conn);
+
+		return member;
+	}
+
+	public int deleteMember(String id) {
+		int result = 0;
+		Connection conn = null;
+
+		try {
+			conn = getConnection();
+
+			result = memberDao.deleteMember(conn, id);
+
+			commit(conn);
+		} catch (Exception e) {
+			rollback(conn);
+			e.printStackTrace();
+		} finally {
+			close(conn);
+		}
+
+		return result;
+	}
+
+	public List<Member> selectAll() {
+		Connection conn = null;
+
+		conn = getConnection();
+		List<Member> list = memberDao.selectAll(conn);
+		close(conn);
+
+		return list;
+	}
+
+	public int updateMemberName(String id, String newName) {
+		int result = 0;
+		Connection conn = null;
+
+		try {
+			conn = getConnection();
+			result = memberDao.updateMemberName(conn, id, newName);
+			commit(conn);
+		} catch (Exception e) {
+			rollback(conn);
+			e.printStackTrace();
+		} finally {
+			close(conn);
+		}
+		return result;
+	}
+
+	public int updateMemberBirthday(String id, Date newDate) {
+		int result = 0;
+		Connection conn = null;
+
+		try {
+			conn = getConnection();
+			result = memberDao.updateMemberBirthday(conn, id, newDate);
+			commit(conn);
+		} catch (Exception e) {
+			rollback(conn);
+			e.printStackTrace();
+		} finally {
+			close(conn);
+		}
+		return result;
+	}
+
+	public int updateMemberEmail(String id, String newEmail) {
+		int result = 0;
+		Connection conn = null;
+
+		try {
+			conn = getConnection();
+			result = memberDao.updateMemberEmail(conn, id, newEmail);
+			commit(conn);
+		} catch (Exception e) {
+			rollback(conn);
+			e.printStackTrace();
+		} finally {
+			close(conn);
+		}
+		return result;
+	}
+
+	public int updateMemberAddress(String id, String newAddress) {
+		int result = 0;
+		Connection conn = null;
+
+		try {
+			conn = getConnection();
+			result = memberDao.updateMemberAddress(conn, id, newAddress);
+			commit(conn);
+		} catch (Exception e) {
+			rollback(conn);
+			e.printStackTrace();
+		} finally {
+			close(conn);
+		}
+		return result;
 	}
 
 //	// jdbcTmplate 없을 때

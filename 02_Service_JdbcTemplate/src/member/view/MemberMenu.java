@@ -29,14 +29,15 @@ public class MemberMenu {
                 + "5. 회원 정보 변경\n"
                 + "6. 회원 탈퇴\n"
                 + "0. 프로그램 종료\n"
-                + "----------------------------------------\n"
+                + "------------------------------------------\n"
                 + "선택 : ";
 
 		while (true) {
 			System.out.print(menu);
 
 			Member member = null;
-			String name;
+			String name = null;
+			String id = null;
 			int result = 0;
 			List<Member> list = null;
 
@@ -44,8 +45,13 @@ public class MemberMenu {
 
 			switch (choice) {
 			case "1":
+				list = memberController.selectAll();
+				printMemberList(list);
 				break;
 			case "2":
+				id = inputMemberId();
+				member = memberController.findMemberById(id);
+				printMember(member);
 				break;
 			case "3":
 				name = inputMeberName();
@@ -58,8 +64,16 @@ public class MemberMenu {
 				printResultMsg(result, "회원가입 완료", "회원가입 실패");
 				break;
 			case "5":
+				id = inputMemberId();
+				member = memberController.findMemberById(id);
+				printMember(member);
+				if (member != null)
+					subMenu(id);
 				break;
 			case "6":
+				id = inputMemberId();
+				result = memberController.deleteMember(id);
+				printResultMsg(result, "회원탈퇴 완료", "회원탈퇴 실패");
 				break;
 			case "0":
 				return;
@@ -69,9 +83,124 @@ public class MemberMenu {
 		}
 	}
 
+	private void subMenu(String id) {
+		String menu = "************* 회원 정보 변경 메뉴 *************\n"
+					+ "1. 이름 변경\n"
+					+ "2. 생일 변경\n"
+					+ "3. 이메일 변경\n"
+					+ "4. 주소 변경\n"
+					+ "9. 메인메뉴 돌아가기\n"
+					+ "------------------------------------------\n"
+					+ "선택 : ";
+		
+		while (true) {
+			System.out.print(menu);
+			String choice = sc.next();
+			int result = 0;
+			String newString = null;
+			Date newDate = null;
+
+			switch (choice) {
+			case "1":
+				newString = inputNewMemberName();
+				result = memberController.updateMemberName(id, newString);
+				printUpdateMember(result, id);
+				break;
+			case "2":
+				newDate = inputNewMemberBirthday();
+				result = memberController.updateMemberBirthday(id, newDate);
+				printUpdateMember(result, id);
+				break;
+			case "3":
+				newString = inputNewMemberEmail();
+				result = memberController.updateMemberEmail(id, newString);
+				printUpdateMember(result, id);
+				break;
+			case "4":
+				newString = inputNewMemberAddress();
+				result = memberController.updateMemberAddress(id, newString);
+				printUpdateMember(result, id);
+				break;
+			case "9":
+				return;
+			default:
+				System.out.println("잘못 입력하셨습니다.");
+			}
+
+		}
+	}
+
+	private String inputNewMemberAddress() {
+		sc.nextLine(); // 버퍼비우기
+		System.out.println("> 새로운 주소를 입력하세요.");
+		System.out.print("주소 : ");
+		return sc.nextLine();
+	}
+	
+	private String inputNewMemberEmail() {
+		System.out.println("> 새로운 이메일을 입력하세요.");
+		System.out.print("이메일 : ");
+		return sc.next();
+	}
+
+	private Date inputNewMemberBirthday() {
+		System.out.println("> 새로운 생일을 입력하세요.");
+		System.out.print("생일(예시: 19990302) : ");
+		String tmpBirthday = sc.next();
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		Date birthday = null;
+		try {
+			long millis = sdf.parse(tmpBirthday).getTime();
+			birthday = new Date(millis);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return birthday;
+	}
+
+	private String inputNewMemberName() {
+		System.out.println("> 새로운 이름을 입력하세요.");
+		System.out.print("이름 : ");
+		return sc.next();
+	}
+
+	private void printUpdateMember(int result, String id) {
+		if (result > 0) {
+			Member member = memberController.findMemberById(id);
+			printMember(member);
+		} else
+			System.out.println("> 회원정보변경에 실패하였습니다.\n");
+	}
+
+	private void printMember(Member member) {
+		if(member == null)
+			System.out.println("> 조회된 회원이 없습니다.\n");
+		else {
+			System.out.println("> 조회결과");
+			System.out.println("==================================================================================================================================");
+			System.out.printf("%15s%10s%10s%15s%20s%20s%30s%n",
+					"id", "name", "gender","birthday", "email", "address", "regDate");
+			System.out.println("----------------------------------------------------------------------------------------------------------------------------------");
+
+			System.out.printf("%15s%10s%10s%15s%20s%20s%30s%n",
+					member.getId(), member.getName(), member.getGender(), member.getBirthday(),
+					member.getEmail(), member.getAddress(), member.getRegDate());
+			
+			System.out.println("----------------------------------------------------------------------------------------------------------------------------------");
+			System.out.println();
+		}
+	}
+
+	private String inputMemberId() {
+		System.out.println("> 대상의 아이디를 입력하세요.");
+		System.out.print("아이디 : ");
+		return sc.next();
+	}
+
 	private void printMemberList(List<Member> list) {
 		if (list.isEmpty()) // null이 들어오진 않음
-			System.out.println("> 조회된 회원이 없습니다.");
+			System.out.println("> 조회된 회원이 없습니다.\n");
 		else {
 			System.out.println("> 조회결과");
 			System.out.println("==================================================================================================================================");
@@ -118,7 +247,7 @@ public class MemberMenu {
 		// 생일 입력
 		System.out.print("생일(예시: 19990302) : ");
 		String tmpBirthday = sc.next();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyymmdd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		Date birthday = null;
 		try {
 			long millis = sdf.parse(tmpBirthday).getTime();

@@ -3,6 +3,7 @@ package member.model.dao;
 import static common.JdbcTemplate.*;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -79,6 +80,149 @@ public class MemberDao {
 		}
 
 		return list;
+	}
+
+	public Member findMemberById(Connection conn, String id) {
+		String sql = "select * from member where id = ?";
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		Member member = null;
+		
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, id);
+			
+			rset = pstmt.executeQuery();
+			
+			while(rset.next())
+				member = new Member(rset.getString("id"), rset.getString("name"), rset.getString("gender"),
+						rset.getDate("birthday"), rset.getString("email"), rset.getString("address"), rset.getTimestamp("reg_date"));
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(rset);
+			close(pstmt);
+		}
+		return member;
+	}
+
+	public int deleteMember(Connection conn, String id) {
+		String sql = "delete from member where id = ?";
+		PreparedStatement pstmt = null;
+		int result = 0;
+
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, id);
+
+			result = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			close(pstmt);
+		}
+
+		return result;
+	}
+
+	public List<Member> selectAll(Connection conn) {
+		String sql = "select * from member";
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		List<Member> list = new ArrayList<>();
+		
+		try {
+			pstmt = conn.prepareStatement(sql);
+			
+			rset = pstmt.executeQuery();
+			
+			while(rset.next()) {
+				Member member = new Member(rset.getString("id"), rset.getString("name"), rset.getString("gender"),
+							rset.getDate("birthday"), rset.getString("email"), rset.getString("address"), rset.getTimestamp("reg_date"));
+				list.add(member);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(rset);
+			close(pstmt);
+		}
+		
+		return list;
+	}
+
+	public int updateMemberName(Connection conn, String id, String newName) {
+		String sql = "update member set name = ? where id = ?";
+		PreparedStatement pstmt = null;
+		int result = 0;
+		
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, newName);
+			pstmt.setString(2, id);
+			
+			result = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+		
+		return result;
+	}
+
+	public int updateMemberBirthday(Connection conn, String id, Date newDate) {
+		String sql = "update member set birthday = ? where id = ?";
+		PreparedStatement pstmt = null;
+		int result = 0;
+		
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setDate(1, newDate);
+			pstmt.setString(2, id);
+			
+			result = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+		
+		return result;
+	}
+
+	public int updateMemberEmail(Connection conn, String id, String newEmail) {
+		String sql = "update member set email = ? where id = ?";
+		PreparedStatement pstmt = null;
+		int result = 0;
+		
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, newEmail);
+			pstmt.setString(2, id);
+			
+			result = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+		
+		return result;
+	}
+
+	public int updateMemberAddress(Connection conn, String id, String newAddress) {
+		String sql = "update member set address = ? where id = ?";
+		PreparedStatement pstmt = null;
+		int result = 0;
+		
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, newAddress);
+			pstmt.setString(2, id);
+			
+			result = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+		
+		return result;
 	}
 
 }
