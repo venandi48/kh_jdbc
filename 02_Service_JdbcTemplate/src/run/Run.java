@@ -1,4 +1,4 @@
-package member.run;
+package run;
 
 import member.view.MemberMenu;
 

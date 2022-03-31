@@ -38,7 +38,8 @@ insert into member values( 'qwerty', '꾸어띠', 'M', '2005-01-09', 'qwerty@gma
 commit;
 
 select * from member;
-
+insert into member values( 'magd', '마길동', 'M', '1990-08-05', 'magd@naver.com', '서울시 강서구 목동', default);
+insert into member values( 'yoogs', '유관순', 'F', '1990-03-01', 'yoogs@naver.com', '서울시 서초구 방배동', default);
 -- java.sql.Data <---> date jdbc 연결 시 년월일 정보만 전송(시분초 유실)
 -- java.sql.Timestmp <--->
 select sysdate, systimestamp from dual;
