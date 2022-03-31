@@ -99,7 +99,7 @@ public class JdbcConnectionTest {
 			Class.forName(driverClass);
 			
 			// 2. Connection객체 생성(url, user, password)
-			// outoCommit(false) : 코드로써 트랜잭션을 직접 관리하기위한 설정. 기본값 true
+			// setAutoCommit(false) : 코드로써 트랜잭션을 직접 관리하기위한 설정. 기본값 true
 			conn = DriverManager.getConnection(url, user, password);
 			conn.setAutoCommit(false);
 			

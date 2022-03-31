@@ -13,7 +13,7 @@ import member.model.vo.Member;
  * 
  * view패키지 클래스
  *  - 사용자가 보게될 화면을 담당하는 클래스
- *  - 메뉴, 사용자입력값 처리, 요청한 데이터 출력
+ *  - 메뉴 제공, 사용자입력값 처리, 요청한 데이터 출력
  *
  */
 public class MemberMenu {
@@ -70,8 +70,7 @@ public class MemberMenu {
 				
 			case "5" :
 				member = inputModify(controller.selectOne(inputId()));
-				if(member != null)
-					result = controller.updateMember(member);
+				result = controller.updateMember(member);
 				System.out.println(result > 0 ? "> 회원정보 변경 완료" : "> 회원정보 변경 실패");
 				break;
 				
@@ -117,7 +116,7 @@ public class MemberMenu {
 			System.out.print("주소 : ");
 			String address = sc.nextLine();
 
-			return new Member(member.getId(), name, member.getGender(), birthday, email, address, member.getRegDate());
+			return new Member(member.getId(), name, null, birthday, email, address, null);
 		}
 	}
 

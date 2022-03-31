@@ -12,6 +12,20 @@ import java.util.List;
 
 import member.model.vo.Member;
 
+/**
+ * 
+ * dao클래스
+ *  - Database Access Object
+ *  - db에 접근해서 요청/응답 처리
+ * 
+ * 1. driver class 등록
+ * 2. Connection 생성
+ * 3. PreparedStatement 생성
+ * 4. 쿼리 실행
+ * 5. ResultSet 처리 / 트랜잭션 처리
+ * 6. 자원반납
+ *
+ */
 public class MemberDao {
 	
 	String driverClass = "oracle.jdbc.OracleDriver"; // 드라이버클래스명
@@ -291,6 +305,10 @@ public class MemberDao {
 		PreparedStatement pstmt = null;
 		int result = 0;
 		String sql = "update member set name = ?, birthday = ?, email = ?, address = ? where id = ?";
+		
+		if(member == null) {
+			return result;
+		}
 		
 		try {
 			Class.forName(driverClass);
