@@ -85,7 +85,7 @@ public class MemberMenu {
 					+ "2. 생일 변경\n"
 					+ "3. 이메일 변경\n"
 					+ "4. 주소 변경\n"
-					+ "9. 메인메뉴 돌아가기\n"
+					+ "0. 메인메뉴 돌아가기\n"
 					+ "------------------------------------------\n"
 					+ "선택 : ";
 
@@ -100,71 +100,49 @@ public class MemberMenu {
 			
 			System.out.print(menu);
 			String choice = sc.next();
-			int result = 0;
-			String newString = null;
-			Date newDate = null;
-
+			String colName = null;
+			Object newValue = null;
+			
 			switch (choice) {
 			case "1":
-				newString = inputNewMemberName();
-				result = memberController.updateMemberName(id, newString);
+				System.out.print("변경할 이름 : ");
+				colName = "name";
+				newValue = sc.next();
 				break;
 			case "2":
-				newDate = inputNewMemberBirthday();
-				result = memberController.updateMemberBirthday(id, newDate);
+				System.out.print("변경할 생일(예시: 19870302) : ");
+				colName = "birthday";
+				String tmpBirthday = sc.next();
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+				try {
+					long millis = sdf.parse(tmpBirthday).getTime();
+					newValue = new Date(millis);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
 				break;
 			case "3":
-				newString = inputNewMemberEmail();
-				result = memberController.updateMemberEmail(id, newString);
+				System.out.print("변경할 이메일 : ");
+				colName = "email";
+				newValue = sc.next();
 				break;
 			case "4":
-				newString = inputNewMemberAddress();
-				result = memberController.updateMemberAddress(id, newString);
+				System.out.print("변경할 주소 : ");
+				colName = "address";
+				sc.nextLine(); // 버퍼 비우기
+				newValue = sc.nextLine();
 				break;
-			case "9":
+			case "0":
 				return;
 			default:
 				System.out.println("잘못 입력하셨습니다.");
 			}
-
+			
+			int result = memberController.updateMember(id, colName, newValue);
 			printResultMsg(result, "회원정보 수정 완료", "회원정보 수정 실패");
 		}
 	}
 
-	private String inputNewMemberAddress() {
-		sc.nextLine(); // 버퍼비우기
-		System.out.println("> 새로운 주소를 입력하세요.");
-		System.out.print("주소 : ");
-		return sc.nextLine();
-	}
-	
-	private String inputNewMemberEmail() {
-		System.out.println("> 새로운 이메일을 입력하세요.");
-		System.out.print("이메일 : ");
-		return sc.next();
-	}
-
-	private Date inputNewMemberBirthday() {
-		System.out.println("> 새로운 생일을 입력하세요.");
-		System.out.print("생일(예시: 19990302) : ");
-		String tmpBirthday = sc.next();
-
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		Date birthday = null;
-		try {
-			long millis = sdf.parse(tmpBirthday).getTime();
-			birthday = new Date(millis);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return birthday;
-	}
-
-	private String inputNewMemberName() {
-		System.out.println("> 새로운 이름을 입력하세요.");
-		System.out.print("이름 : ");
-		return sc.next();
-	}
 
 	private void printMember(Member member) {
 		if(member == null)
