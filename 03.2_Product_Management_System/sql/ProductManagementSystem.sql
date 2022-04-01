@@ -2,7 +2,7 @@
 -- kh계정
 -------------------------------------------------------
 
--- #1. 테이블 product_detail
+-- #1. 상품 상세정보 테이블 product_detail
 create table product_detail(
     id varchar2(30),
     brand varchar2(50) not null,
@@ -17,28 +17,38 @@ create table product_detail(
 -- drop table product_detail;
 
 
--- #2. 테이블 product_stock
+-- #2. 상품 재고 테이블 product_stock
 create table product_stock(
+    product_id varchar2(30),
+    stock number default 0,
+    constraint pk_product_stock_no primary key(product_id)
+);
+-- drop table product_stock;
+
+
+-- #3. 상품 입출고 테이블 product_io
+create table product_io(
     no number not null,
     product_id varchar2(30),
     count number,
     status char(1),
     io_datetime timestamp default systimestamp,
-    constraint pk_product_stock_no primary key(no),
-    constraint fk_product_stock_product_id
-        foreign key(product_id) references product_detail(id),
-    constraint ck_product_stock_status check(status in ('I', 'O'))
+    constraint pk_product_io_no primary key(no),
+    constraint fk_product_io_product_id
+        foreign key(product_id) references product_detail(id) on delete cascade,
+    constraint ck_product_io_count check(count >= 0),
+    constraint ck_product_io_status check(status in ('I', 'O'))
 );
--- drop table product_stock;
+-- drop table product_io;
 
 
--- #3. 시퀀스
-create sequence seq_product_stock_no;
--- drop sequence seq_product_stock_no;
+-- #4. 시퀀스
+create sequence seq_product_io_no;
+-- drop sequence seq_product_io_no;
 
 
--- #4. 트리거
--- 상품정보테이블에 레코드 추가/삭제 시 함께 추가/삭제
+-- #5. 트리거
+-- 상품정보테이블에 레코드 추가/삭제 시 재고테이블에도 추가/삭제
 create or replace trigger trig_product_stock_insert_delete
     after
     insert or delete on product_detail
@@ -46,7 +56,7 @@ create or replace trigger trig_product_stock_insert_delete
 begin
     if inserting then
         insert into product_stock
-            values(seq_product_stock_no.nextval, :new.id, 0, 'I', default);
+            values(:new.id, default);
     elsif deleting then
         delete from product_stock
         where product_id = :old.id;
@@ -54,6 +64,31 @@ begin
 end;
 /
 -- drop trigger trig_product_stock_insert_delete;
+
+
+-- #6. 트리거
+-- 입출고 테이블에 레코드 추가시 재고테이블 변경
+create or replace trigger trig_product_stock_update
+    before
+    insert on product_io
+    for each row
+begin
+    if :new.status = 'I' then
+        update product_stock
+        set 
+            stock = stock + :new.count
+        where 
+            product_id = :new.product_id;
+    elsif :new.status = 'O' then
+        update product_stock
+        set 
+            stock = stock - :new.count
+        where 
+            product_id = :new.product_id;
+    end if;
+end;
+/
+-- drop trigger trig_product_stock_update;
 
 -----------------------------------------------------------------------
 
@@ -72,3 +107,4 @@ commit;
 
 select * from product_detail;
 select * from product_stock;
+select * from product_io;

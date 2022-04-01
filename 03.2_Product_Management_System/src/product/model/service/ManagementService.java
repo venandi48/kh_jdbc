@@ -1,13 +1,16 @@
 package product.model.service;
 
 import static common.JdbcTemplate.close;
+import static common.JdbcTemplate.commit;
 import static common.JdbcTemplate.getConnection;
+import static common.JdbcTemplate.rollback;
 
 import java.sql.Connection;
 import java.util.List;
 
 import product.model.dao.ManagementDao;
 import product.model.vo.Product;
+import product.model.vo.ProductIO;
 
 public class ManagementService {
 
@@ -39,6 +42,80 @@ public class ManagementService {
 		
 		conn = getConnection();
 		List<Product> list = managementDao.selectProductList(conn, col, searchData);
+		close(conn);
+		
+		return list;
+	}
+
+	public int insertProduct(Product product) {
+		Connection conn = null;
+		int result = 0;
+
+		try {
+			conn = getConnection();
+			result = managementDao.insertProduct(conn, product);
+			commit(conn);
+		} catch (Exception e) {
+			rollback(conn);
+			throw e;
+		} finally {
+			close(conn);
+		}
+
+		return result;
+	}
+
+	public int deleteProduct(String id) {
+		Connection conn = null;
+		int result = 0;
+
+		try {
+			conn = getConnection();
+			result = managementDao.deleteProduct(conn, id);
+			commit(conn);
+		} catch (Exception e) {
+			rollback(conn);
+			throw e;
+		} finally {
+			close(conn);
+		}
+
+		return result;
+	}
+
+	public Product selectOne(String id) {
+		Connection conn = null;
+		Product product = null;
+		
+		conn = getConnection();
+		product = managementDao.selectOne(conn, id);
+		close(conn);
+		
+		return product;
+	}
+
+	public int updateProduct(String id, String col, Object newData) {
+		Connection conn = null;
+		int result = 0;
+		try {
+			conn = getConnection();
+			result = managementDao.updateProduct(conn, id, col, newData);
+			commit(conn);
+		} catch (Exception e) {
+			rollback(conn);
+			throw e;
+		} finally {
+			close(conn);
+		}
+		return result;
+	}
+
+	public List<ProductIO> selectProductIO(String productId) {
+		Connection conn = null;
+		List<ProductIO> list = null;
+		
+		conn = getConnection();
+		list = managementDao.selectProductIO(conn, productId);
 		close(conn);
 		
 		return list;
