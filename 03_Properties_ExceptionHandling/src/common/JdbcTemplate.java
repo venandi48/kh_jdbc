@@ -31,7 +31,7 @@ public class JdbcTemplate {
 			url = prop.getProperty("url");
 			user = prop.getProperty("user");
 			password = prop.getProperty("password");
-			System.out.println("> 성정정보 로드 완료");
+			System.out.println("> 설정정보 로드 완료");
 			
 		} catch (IOException e1) {
 			e1.printStackTrace();

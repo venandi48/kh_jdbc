@@ -11,6 +11,7 @@ import java.util.List;
 
 import member.model.dao.MemberDao;
 import member.model.vo.Member;
+import member.model.vo.MemberDel;
 
 /**
  * 
@@ -47,7 +48,7 @@ public class MemberService {
 			commit(conn);
 		} catch (Exception e) {
 			rollback(conn);
-			e.printStackTrace();
+			throw e;
 		} finally {
 			// 4. 자원반납
 			close(conn);
@@ -89,7 +90,7 @@ public class MemberService {
 			commit(conn);
 		} catch (Exception e) {
 			rollback(conn);
-			e.printStackTrace();
+			throw e;
 		} finally {
 			close(conn);
 		}
@@ -122,6 +123,16 @@ public class MemberService {
 			close(conn);
 		}
 		return result;
+	}
+
+	public List<MemberDel> selectQuit() {
+		Connection conn = null;
+
+		conn = getConnection();
+		List<MemberDel> list = memberDao.selectQuit(conn);
+		close(conn);
+		
+		return list;
 	}
 
 }

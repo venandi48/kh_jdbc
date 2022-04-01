@@ -14,6 +14,7 @@ import java.util.Properties;
 
 import member.model.exception.MemberException;
 import member.model.vo.Member;
+import member.model.vo.MemberDel;
 
 public class MemberDao {
 	
@@ -48,8 +49,7 @@ public class MemberDao {
 			result = pstmt.executeUpdate();
 
 		} catch (SQLException e) {
-			// checked예외를 un-checked로 전환하여 던지기
-			throw new RuntimeException(e); // 기존 예외를 전환하여 던짐 -> service 트랜잭션처리용
+			throw new MemberException("insertMember 오류",e);
 		} finally {
 			// 3. 자원반납(pstmt) - 트랜잭션 처리 전이므로 conn반환X
 			close(pstmt);
@@ -86,7 +86,7 @@ public class MemberDao {
 				list.add(member);
 			}
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new MemberException("findMemberByName 조회오류",e);
 		} finally {
 			// 4. 자원반납(pstmt, rset)
 			close(rset);
@@ -97,7 +97,7 @@ public class MemberDao {
 	}
 
 	public Member findMemberById(Connection conn, String id) {
-		String sql = "select * from member where id = ?";
+		String sql = prop.getProperty("findMemberById");
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		Member member = null;
@@ -113,7 +113,7 @@ public class MemberDao {
 						rset.getDate("birthday"), rset.getString("email"), rset.getString("address"), rset.getTimestamp("reg_date"));
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new MemberException("findMemberByid 조회오류",e);
 		} finally {
 			close(rset);
 			close(pstmt);
@@ -122,7 +122,7 @@ public class MemberDao {
 	}
 
 	public int deleteMember(Connection conn, String id) {
-		String sql = "delete from member where id = ?";
+		String sql = prop.getProperty("deleteMember");
 		PreparedStatement pstmt = null;
 		int result = 0;
 
@@ -132,7 +132,7 @@ public class MemberDao {
 
 			result = pstmt.executeUpdate();
 		} catch (SQLException e) {
-			throw new RuntimeException(e);
+			throw new MemberException("deleteMember오류",e);
 		} finally {
 			close(pstmt);
 		}
@@ -141,7 +141,7 @@ public class MemberDao {
 	}
 
 	public List<Member> selectAll(Connection conn) {
-		String sql = "select * from member";
+		String sql = prop.getProperty("selectAll");
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		List<Member> list = new ArrayList<>();
@@ -168,7 +168,7 @@ public class MemberDao {
 	}
 
 	public int updateMember(Connection conn, String id, String colName, Object newValue) {
-		String sql = "update member set # = ? where id = ?";
+		String sql = prop.getProperty("updateMember");
 		sql = sql.replace("#", colName);
 		
 		PreparedStatement pstmt = null;
@@ -180,12 +180,39 @@ public class MemberDao {
 			pstmt.setString(2, id);
 			result = pstmt.executeUpdate();
 		} catch (SQLException e) {
-			throw new MemberException("updateMember 예외",e);
+			throw new MemberException("updateMember 오류",e);
 		} finally {
 			close(pstmt);
 		}
 		
 		return result;
+	}
+
+	public List<MemberDel> selectQuit(Connection conn) {
+		String sql = prop.getProperty("selectQuit");
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		List<MemberDel> list = new ArrayList<>();
+
+		try {
+			pstmt = conn.prepareStatement(sql);
+
+			rset = pstmt.executeQuery();
+
+			while (rset.next()) {
+				MemberDel member = new MemberDel(rset.getString("id"), rset.getString("name"), rset.getString("gender"), rset.getDate("birthday"), 
+						rset.getString("email"), rset.getString("address"), rset.getTimestamp("reg_date"), rset.getDate("del_date"));
+				list.add(member);
+			}
+		} catch (SQLException e) {
+			throw new MemberException("selectQuit 조회오류", e);
+		} finally {
+			close(rset);
+			close(pstmt);
+		}
+		
+		
+		return list;
 	}
 
 }

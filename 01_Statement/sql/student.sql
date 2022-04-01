@@ -43,3 +43,45 @@ insert into member values( 'yoogs', '유관순', 'F', '1990-03-01', 'yoogs@naver
 -- java.sql.Data <---> date jdbc 연결 시 년월일 정보만 전송(시분초 유실)
 -- java.sql.Timestmp <--->
 select sysdate, systimestamp from dual;
+
+
+-------------------------------------------------------
+
+create table member_del
+as
+select member.*, sysdate del_date from member
+where 1 = 0;
+-- drop table member_del;
+
+select * from member_del;
+desc member_del;
+
+-- 제약조건 설정
+alter table
+    member_del
+add constraint ch_member_del_gender check(gender in ('M', 'F'))
+modify del_date default sysdate;
+
+
+
+
+--같은 회원이 같은 아이디로 가입/탈퇴, 다른 메일로 가입/탈퇴하기를 반복할수있으니 생략
+--alter table
+--    member_del
+--add constraint pk_member_del_id primary key(id);
+
+--alter table
+--    member_del
+--add constraint uq_member_del_email unique(email);
+
+-- 트리거 생성
+create or replace trigger trig_member_del
+    before
+    delete on member
+    for each row
+begin
+    insert into member_del
+    values(:old.id, :old.name, :old.gender, :old.birthday, :old.email,
+            :old.address, :old.reg_date, default);
+end;
+/

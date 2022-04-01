@@ -4,6 +4,7 @@ import java.util.List;
 
 import member.model.service.MemberService;
 import member.model.vo.Member;
+import member.model.vo.MemberDel;
 
 /**
  * 
@@ -16,22 +17,47 @@ public class MemberController {
 	private MemberService memberService = new MemberService();
 
 	public int insertMember(Member member) {
-		int result = memberService.insertMember(member);
+		int result = 0;
+		try {
+			result = memberService.insertMember(member);
+		} catch (Exception e) {
+			//e.printStackTrace();
+			System.err.println("[" + e.getMessage() + "] 불편을 드려 죄송합니다. 관리자에게 문의하세요.");
+		}
 		return result;
 	}
 
 	public List<Member> findMemberByName(String name) {
-		List<Member> list = memberService.findMemberbyName(name);
+		List<Member> list = null;
+		try {
+			list = memberService.findMemberbyName(name);
+		} catch (Exception e) {
+			// e.printStackTrace();
+			System.err.println("[" + e.getMessage() + "] 불편을 드려 죄송합니다. 관리자에게 문의하세요.");
+		}
 		return list;
 	}
 
 	public Member findMemberById(String id) {
-		Member member = memberService.findMemberById(id);
+		Member member = null;
+		try {
+			member = memberService.findMemberById(id);
+		} catch (Exception e) {
+			// e.printStackTrace();
+			System.err.println("[" + e.getMessage() + "] 불편을 드려 죄송합니다. 관리자에게 문의하세요.");
+		}
 		return member;
 	}
 
 	public int deleteMember(String id) {
-		int result = memberService.deleteMember(id);
+		int result = 0;
+		
+		try {
+			result = memberService.deleteMember(id);
+		} catch (Exception e) {
+			// e.printStackTrace();
+			System.err.println("[" + e.getMessage() + "] 불편을 드려 죄송합니다. 관리자에게 문의하세요.");
+		}
 		return result;
 	}
 
@@ -64,6 +90,18 @@ public class MemberController {
 		}
 
 		return result;
+	}
+
+	public List<MemberDel> selectQuit() {
+		List<MemberDel> list = null;
+		
+		try {
+			list = memberService.selectQuit();
+		} catch (Exception e) {
+			//e.printStackTrace();
+			System.err.println("[" + e.getMessage() + "] 불편을 드려 죄송합니다. 관리자에게 문의하세요.");
+		}
+		return list;
 	}
 
 }

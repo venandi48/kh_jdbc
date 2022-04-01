@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 import member.controller.MemberController;
 import member.model.vo.Member;
+import member.model.vo.MemberDel;
 
 /**
  * 
@@ -28,6 +29,7 @@ public class MemberMenu {
                 + "4. 회원 가입\n"
                 + "5. 회원 정보 변경\n"
                 + "6. 회원 탈퇴\n"
+                + "7. 탈퇴회원 조회\n"
                 + "0. 프로그램 종료\n"
                 + "------------------------------------------\n"
                 + "선택 : ";
@@ -40,6 +42,7 @@ public class MemberMenu {
 			String id = null;
 			int result = 0;
 			List<Member> list = null;
+			List<MemberDel> delList = null;
 
 			String choice = sc.next();
 
@@ -71,6 +74,10 @@ public class MemberMenu {
 				result = memberController.deleteMember(id);
 				printResultMsg(result, "회원탈퇴 완료", "회원탈퇴 실패");
 				break;
+			case "7":
+				delList = memberController.selectQuit();
+				printQuitMemberList(delList);
+				break;
 			case "0":
 				return;
 			default:
@@ -78,6 +85,28 @@ public class MemberMenu {
 			}
 		}
 	}
+
+
+	private void printQuitMemberList(List<MemberDel> delList) {
+		if (delList.isEmpty()) // null이 들어오진 않음
+			System.out.println("> 조회된 회원이 없습니다.\n");
+		else {
+			System.out.println("> 조회결과");
+			System.out.println("==========================================================================================================================================");
+			System.out.printf("%15s%10s%10s%15s%20s%20s%30s%15s%n",
+					"id", "name", "gender","birthday", "email", "address", "regDate", "delDate");
+			System.out.println("------------------------------------------------------------------------------------------------------------------------------------------");
+
+			for (MemberDel m : delList) {
+				System.out.printf("%15s%10s%10s%15s%20s%20s%30s%15s%n",
+						m.getId(), m.getName(), m.getGender(), m.getBirthday(),
+						m.getEmail(), m.getAddress(), m.getRegDate(), m.getDelDate());
+			}
+			System.out.println("------------------------------------------------------------------------------------------------------------------------------------------");
+			System.out.println();
+		}
+	}
+
 
 	private void subMenu(String id) {
 		String menu = "************* 회원 정보 변경 메뉴 *************\n"
@@ -164,7 +193,7 @@ public class MemberMenu {
 	}
 
 	private String inputMemberId() {
-		System.out.println("> 대상의 아이디를 입력하세요.");
+		System.out.println("> 아이디를 입력하세요.");
 		System.out.print("아이디 : ");
 		return sc.next();
 	}
@@ -186,7 +215,7 @@ public class MemberMenu {
 			}
 			System.out.println("----------------------------------------------------------------------------------------------------------------------------------");
 			System.out.println();
-		}		
+		}
 	}
 
 	/**
@@ -208,8 +237,21 @@ public class MemberMenu {
 		Member member = new Member();
 
 		System.out.println("> 신규회원정보를 입력하세요.");
-		System.out.print("아이디 : ");
-		member.setId(sc.next());
+		String id = null;
+
+		// 중복아이디 검사
+		Member existM = null;
+		do {
+			System.out.print("아이디 : ");
+			id = sc.next();
+			existM = memberController.findMemberById(id);
+			if (existM != null)
+				System.out.println("> 사용불가능한 아이디입니다. 다시 입력하세요.");
+		} while (existM != null);
+
+		System.out.println("> 사용가능한 아이디입니다😀");
+
+		member.setId(id);
 		System.out.print("이름 : ");
 		member.setName(sc.next());
 		System.out.print("성별(M/F) : ");
