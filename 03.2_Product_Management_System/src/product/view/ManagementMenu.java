@@ -24,28 +24,28 @@ public class ManagementMenu {
 				+ "0. 프로그램종료\n"
 				+ "************************************\n"
 				+ "번호입력 : ";
-		
-		while(true) {
+
+		while (true) {
 			System.out.print(menu);
 			String choice = sc.next();
 			List<Product> list = null;
 			Product product = null;
 			int result = 0;
-			
-			switch(choice) {
-			case "1" :
+
+			switch (choice) {
+			case "1":
 				list = managementController.selectAll();
 				printProductList(list);
 				break;
-			case "2" :
+			case "2":
 				serchMenu();
 				break;
-			case "3" :
+			case "3":
 				product = inputProduct();
 				result = managementController.insertProduct(product);
 				printResultMsg(result, "> 상품이 등록되었습니다.", "> 상품등록에 실패하였습니다.");
 				break;
-			case "4" :
+			case "4":
 				updateMenu(inputProductId());
 				break;
 			case "5":
@@ -55,7 +55,8 @@ public class ManagementMenu {
 			case "6":
 				productIOMenu(); // 미완성
 				break;
-			case "0": return;
+			case "0":
+				return;
 			default:
 				System.out.println("> 잘못 입력하셨습니다.");
 			}
@@ -71,29 +72,100 @@ public class ManagementMenu {
 				+ "0. 메인메뉴로 돌아가기\n"
 				+ "*****************************\n"
 				+ "번호입력 : ";
-		
-		while(true) {
+
+		while (true) {
 			System.out.print(menu);
 			String choice = sc.next();
 			List<ProductIO> list = null;
-			
-			switch(choice) {
+
+			switch (choice) {
 			case "1":
 				list = managementController.selectProductIO(inputProductId());
 				printIOList(list);
 				break;
-			case "2": break;
-			case "3": break;
-			case "0": return;
+			case "2":
+				addProductStock();
+				break;
+			case "3":
+				dropProductStock();
+				break;
+			case "0":
+				return;
 			default:
 				System.out.println("> 잘못 입력하셨습니다.");
 			}
 		}
 	}
 
+	private void dropProductStock() {
+		int result = 0;
+
+		String id = inputProductId();
+
+		// 입력한 상품아이디가 존재하지 않는경우
+		Product product = managementController.selectOne(id);
+		if (product == null) {
+			printResultMsg(result, "", "> 입력하신 ID의 상품을 찾을 수 없습니다.");
+			return;
+		}
+
+		// 입력한 상품아이디가 존재하는 경우
+		System.out.println("\n🚚 출고수량을 입력하세요.");
+		System.out.print("출고수량 : ");
+		int count = sc.nextInt();
+		if (count > product.getStock()) {
+			System.err.println("> 입력하신 수량이 현재 재고량보다 많습니다.");
+			return;
+		}
+
+		result = managementController.changeProductStock(id, count, "O");
+		printResultMsg(result, "> 출고처리 완료", "> 출고처리 실패");
+
+		return;
+	}
+
+	private void addProductStock() {
+		int result = 0;
+
+		String id = inputProductId();
+
+		// 입력한 상품아이디가 존재하지 않는경우
+		Product product = managementController.selectOne(id);
+		if (product == null) {
+			printResultMsg(result, "", "> 입력하신 ID의 상품을 찾을 수 없습니다.");
+			return;
+		}
+
+		// 입력한 상품아이디가 존재하는 경우
+		System.out.println("\n🚚 입고수량을 입력하세요.");
+		System.out.print("입고수량 : ");
+		int count = sc.nextInt();
+
+		result = managementController.changeProductStock(id, count, "I");
+		printResultMsg(result, "> 입고처리 완료", "> 입고처리 실패");
+
+		return;
+	}
+
 	private void printIOList(List<ProductIO> list) {
-		
-		
+		if (list.isEmpty()) {
+			System.err.println("> 해당 ID의 입출고내역을 찾을 수 없습니다.\n");
+			return;
+		}
+
+		String line = "------------------------------------------------------------------------------";
+
+		System.out.println("\n> 조회결과");
+		System.out.println(line);
+		System.out.printf("%5s%18s%8s%10s%30s%n", "no", "product", "count", "status", "io_datetime");
+		System.out.println(line);
+
+		for (ProductIO io : list) {
+			System.out.printf("%5d%18s%8d%10c%30s%n", 
+					io.getNo(), io.getProductId(), io.getCount(), io.getStatus(), io.getIoDatetme());
+		}
+
+		System.out.println(line);
 	}
 
 	private void updateMenu(String id) {
@@ -104,17 +176,17 @@ public class ManagementMenu {
 				+ "0. 메인메뉴로 돌아가기\n"
 				+ "*****************************\n"
 				+ "번호입력 : ";
-		
+
 		Product product = managementController.selectOne(id);
-		if(product == null) {
-			System.out.println("> 입력하신 ID정보를 찾을 수 없습니다.\n");
+		if (product == null) {
+			System.err.println("> 입력하신 ID정보를 찾을 수 없습니다.\n");
 			return;
 		}
-		
-		while(true) {
+
+		while (true) {
 			System.out.print(menu);
 			String choice = sc.next();
-			
+
 			String col = null;
 			Object newData = null;
 
@@ -170,7 +242,7 @@ public class ManagementMenu {
 				+ "번호입력 : ";
 		System.out.print(menu);
 		String col = null;
-		
+
 		while (true) {
 			choice = sc.next();
 
@@ -225,13 +297,12 @@ public class ManagementMenu {
 				break;
 			} catch (InputMismatchException e) {
 				sc.nextLine(); // 버퍼비우기
-				System.out.println("> 입력정보에 알맞은 형태로 입력해주세요.\n");
+				System.err.println("> 입력정보에 알맞은 형태로 입력해주세요.\n");
 			}
 		}
 
 		return product;
 	}
-
 
 	private void serchMenu() {
 		String menu = "\n******* 상품검색 메뉴 🔍 *******\n"
@@ -240,8 +311,8 @@ public class ManagementMenu {
 				+ "0. 메인메뉴로 돌아가기\n"
 				+ "****************************\n"
 				+ "번호입력 : ";
-		
-		while(true) {
+
+		while (true) {
 			System.out.print(menu);
 			String choice = sc.next();
 
@@ -291,26 +362,24 @@ public class ManagementMenu {
 
 		System.out.println("\n> 조회결과");
 		System.out.println(line);
-		System.out.printf("%20s%10s%15s%15s%20s%20s%n", "id", "brand", "name", "price", "spec", "stock");
+		System.out.printf("%20s%10s%15s%15s%25s%20s%n", "id", "brand", "name", "price", "spec", "stock");
 		System.out.println(line);
 
 		for (Product p : list) {
-			int count = managementController.findStock(p.getId());
 			
 			String spec = p.getMonitorSize() + "인치 / " + p.getOs() + " / " + p.getStorage() + "GB";
 			System.out.printf("%20s%10s%15s%,15d원 %30s%10s%n",
-					p.getId(), p.getBrand(), p.getName(), p.getPrice(),
-					spec, count);
+					p.getId(), p.getBrand(), p.getName(), p.getPrice(), spec, p.getStock());
 		}
 
 		System.out.println(line);
 	}
-	
+
 	private void printResultMsg(int result, String successMsg, String failureMsg) {
 		if (result > 0)
 			System.out.println(successMsg);
 		else
-			System.out.println(failureMsg);
+			System.err.println(failureMsg);
 	}
 
 }

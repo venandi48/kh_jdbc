@@ -39,8 +39,8 @@ public class ManagementDao {
 
 			rset = pstmt.executeQuery();
 			while (rset.next()) {
-				Product product = new Product(rset.getString("id"), rset.getString("brand"), rset.getString("name"),
-						rset.getInt("price"), rset.getInt("monitor_size"), rset.getString("os"), rset.getInt("storage"), rset.getDate("reg_date"));
+				Product product = new Product(rset.getString("id"), rset.getString("brand"), rset.getString("name"), rset.getInt("price"),
+							rset.getInt("monitor_size"), rset.getString("os"), rset.getInt("storage"), rset.getDate("reg_date"), rset.getInt("stock"));
 				list.add(product);
 			}
 		} catch (SQLException e) {
@@ -51,30 +51,6 @@ public class ManagementDao {
 		}
 		
 		return list;
-	}
-
-	public int findStock(Connection conn, String id) {
-		String sql = prop.getProperty("findStock");
-		PreparedStatement pstmt = null;
-		ResultSet rset = null;
-		int count = 0;
-
-		try {
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, id);
-
-			rset = pstmt.executeQuery();
-
-			while (rset.next())
-				count = rset.getInt("stock");
-		} catch (SQLException e) {
-			throw new ProductManagementException("findStock", e);
-		} finally {
-			close(rset);
-			close(pstmt);
-		}
-
-		return count;
 	}
 
 	public List<Product> selectProductList(Connection conn, String col, String searchData) {
@@ -91,8 +67,8 @@ public class ManagementDao {
 			rset = pstmt.executeQuery();
 
 			while (rset.next()) {
-				Product product = new Product(rset.getString("id"), rset.getString("brand"), rset.getString("name"),
-						rset.getInt("price"), rset.getInt("monitor_size"), rset.getString("os"), rset.getInt("storage"), rset.getDate("reg_date"));
+				Product product = new Product(rset.getString("id"), rset.getString("brand"), rset.getString("name"), rset.getInt("price"),
+						rset.getInt("monitor_size"), rset.getString("os"), rset.getInt("storage"), rset.getDate("reg_date"), rset.getInt("stock"));
 				list.add(product);
 			}
 
@@ -163,8 +139,8 @@ public class ManagementDao {
 			rset = pstmt.executeQuery();
 
 			while (rset.next())
-				product = new Product(rset.getString("id"), rset.getString("brand"), rset.getString("name"),
-						rset.getInt("price"), rset.getInt("monitor_size"), rset.getString("os"), rset.getInt("storage"), rset.getDate("reg_date"));
+				product = new Product(rset.getString("id"), rset.getString("brand"), rset.getString("name"), rset.getInt("price"),
+						rset.getInt("monitor_size"), rset.getString("os"), rset.getInt("storage"), rset.getDate("reg_date"), rset.getInt("stock"));
 
 		} catch (SQLException e) {
 			throw new ProductManagementException("selectOne", e);
@@ -218,6 +194,27 @@ public class ManagementDao {
 			throw new ProductManagementException("selectProductIO", e);
 		}
 		return list;
+	}
+
+	public int changeProductStock(Connection conn, String productId, int count, String status) {
+		String sql = prop.getProperty("addProductStock");
+		PreparedStatement pstmt = null;
+		int result = 0;
+
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, productId);
+			pstmt.setInt(2, count);
+			pstmt.setString(3, status);
+
+			result = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			throw new ProductManagementException("addProductStock", e);
+		} finally {
+			close(pstmt);
+		}
+
+		return result;
 	}
 
 }

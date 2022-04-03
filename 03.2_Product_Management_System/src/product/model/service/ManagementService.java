@@ -26,17 +26,6 @@ public class ManagementService {
 		return list;
 	}
 
-	public int findStock(String id) {
-		int count = 0;
-		Connection conn = null;
-
-		conn = getConnection();
-		count = managementDao.findStock(conn, id);
-		close(conn);
-
-		return count;
-	}
-
 	public List<Product> selectProductList(String col, String searchData) {
 		Connection conn = null;
 		
@@ -120,5 +109,24 @@ public class ManagementService {
 		
 		return list;
 	}
+
+	public int changeProductStock(String productId, int count, String status) {
+		Connection conn = null;
+		int result = 0;
+
+		try {
+			conn = getConnection();
+			result = managementDao.changeProductStock(conn, productId, count, status);
+			commit(conn);
+		} catch (Exception e) {
+			rollback(conn);
+			throw e;
+		} finally {
+			close(conn);
+		}
+
+		return result;
+	}
+
 
 }

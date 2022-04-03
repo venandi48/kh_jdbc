@@ -14,16 +14,15 @@ create table product_detail(
     reg_date date default sysdate,
     constraint pk_product_ditail_id primary key(id)
 );
--- drop table product_detail;
 
 
 -- #2. 상품 재고 테이블 product_stock
 create table product_stock(
     product_id varchar2(30),
     stock number default 0,
-    constraint pk_product_stock_no primary key(product_id)
+    constraint pk_product_stock_no primary key(product_id),
+    constraint ck_product_stock check(stock >= 0)
 );
--- drop table product_stock;
 
 
 -- #3. 상품 입출고 테이블 product_io
@@ -39,12 +38,10 @@ create table product_io(
     constraint ck_product_io_count check(count >= 0),
     constraint ck_product_io_status check(status in ('I', 'O'))
 );
--- drop table product_io;
 
 
 -- #4. 시퀀스
 create sequence seq_product_io_no;
--- drop sequence seq_product_io_no;
 
 
 -- #5. 트리거
@@ -63,7 +60,6 @@ begin
     end if;
 end;
 /
--- drop trigger trig_product_stock_insert_delete;
 
 
 -- #6. 트리거
@@ -88,7 +84,16 @@ begin
     end if;
 end;
 /
--- drop trigger trig_product_stock_update;
+
+
+/*
+drop trigger trig_product_stock_update;
+drop trigger trig_product_stock_insert_delete;
+drop sequence seq_product_io_no;
+drop table product_io;
+drop table product_stock;
+drop table product_detail;
+*/
 
 -----------------------------------------------------------------------
 
@@ -107,4 +112,4 @@ commit;
 
 select * from product_detail;
 select * from product_stock;
-select * from product_io;
+select * from product_io order by io_datetime desc;

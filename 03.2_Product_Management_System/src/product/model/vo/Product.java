@@ -12,13 +12,14 @@ public class Product {
 	private String os;
 	private int storage;
 	private Date regDate;
+	private int stock;
 
 	public Product() {
 		super();
 	}
 
 	public Product(String id, String brand, String name, int price, int monitorSize, String os, int storage,
-			Date regDate) {
+			Date regDate, int stock) {
 		super();
 		this.id = id;
 		this.brand = brand;
@@ -28,8 +29,16 @@ public class Product {
 		this.os = os;
 		this.storage = storage;
 		this.regDate = regDate;
+		this.stock = stock;
 	}
-	
+
+	public int getStock() {
+		return stock;
+	}
+
+	public void setStock(int stock) {
+		this.stock = stock;
+	}
 
 	public String getId() {
 		return id;
@@ -94,12 +103,12 @@ public class Product {
 	public void setRegDate(Date regDate) {
 		this.regDate = regDate;
 	}
-	
 
 	@Override
 	public String toString() {
 		return "Product [id=" + id + ", brand=" + brand + ", name=" + name + ", price=" + price + ", monitorSize="
-				+ monitorSize + ", os=" + os + ", storage=" + storage + ", regDate=" + regDate + "]";
+				+ monitorSize + ", os=" + os + ", storage=" + storage + ", regDate=" + regDate + ", stock=" + stock
+				+ "]";
 	}
 
 }

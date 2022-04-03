@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 public class ProductIO {
 
 	private int no;
-	private String product_id;
+	private String productId;
 	private int count;
 	private char status;
 	private Timestamp ioDatetme;
@@ -14,10 +14,10 @@ public class ProductIO {
 		super();
 	}
 
-	public ProductIO(int no, String product_id, int count, char status, Timestamp ioDatetme) {
+	public ProductIO(int no, String productId, int count, char status, Timestamp ioDatetme) {
 		super();
 		this.no = no;
-		this.product_id = product_id;
+		this.productId = productId;
 		this.count = count;
 		this.status = status;
 		this.ioDatetme = ioDatetme;
@@ -31,12 +31,12 @@ public class ProductIO {
 		this.no = no;
 	}
 
-	public String getProduct_id() {
-		return product_id;
+	public String getProductId() {
+		return productId;
 	}
 
-	public void setProduct_id(String product_id) {
-		this.product_id = product_id;
+	public void setProductId(String productId) {
+		this.productId = productId;
 	}
 
 	public int getCount() {
@@ -65,7 +65,7 @@ public class ProductIO {
 
 	@Override
 	public String toString() {
-		return "ProductIO [no=" + no + ", product_id=" + product_id + ", count=" + count + ", status=" + status
+		return "ProductIO [no=" + no + ", productId=" + productId + ", count=" + count + ", status=" + status
 				+ ", ioDatetme=" + ioDatetme + "]";
 	}
 
