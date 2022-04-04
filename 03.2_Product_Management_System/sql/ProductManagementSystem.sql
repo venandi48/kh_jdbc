@@ -20,7 +20,8 @@ create table product_detail(
 create table product_stock(
     product_id varchar2(30),
     stock number default 0,
-    constraint pk_product_stock_no primary key(product_id),
+    constraint pk_product_stock_id primary key(product_id),
+    constraint fk_product_stock_id foreign key(product_id) references product_detail(id) on delete cascade,
     constraint ck_product_stock check(stock >= 0)
 );
 

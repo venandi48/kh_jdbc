@@ -13,6 +13,11 @@ import product.model.vo.Product;
 import product.model.vo.ProductIO;
 
 public class ManagementService {
+	/**
+	 * application의 필요한 상수는 주로 업무로직 담당인 Service단에 작성한다.
+	 */
+	public static final String PRODUCT_INPUT = "I";		//입고
+	public static final String PRODUCT_OUTPUT = "O";	//출고
 
 	private ManagementDao managementDao = new ManagementDao();
 

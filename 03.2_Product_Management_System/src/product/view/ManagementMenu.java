@@ -53,7 +53,7 @@ public class ManagementMenu {
 				printResultMsg(result, "> 상품이 삭제되었습니다.", "> 상품삭제에 실패하였습니다.");
 				break;
 			case "6":
-				productIOMenu(); // 미완성
+				productIOMenu();
 				break;
 			case "0":
 				return;
@@ -113,6 +113,7 @@ public class ManagementMenu {
 		System.out.println("\n🚚 출고수량을 입력하세요.");
 		System.out.print("출고수량 : ");
 		int count = sc.nextInt();
+		// 출고량 유효성 검사는 service 단에서 하는것이 더 좋음
 		if (count > product.getStock()) {
 			System.err.println("> 입력하신 수량이 현재 재고량보다 많습니다.");
 			return;

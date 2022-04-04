@@ -99,6 +99,7 @@ public class ManagementDao {
 
 			result = pstmt.executeUpdate();
 		} catch (SQLException e) {
+			
 			throw new ProductManagementException("insertProduct", e);
 		} finally {
 			close(pstmt);
