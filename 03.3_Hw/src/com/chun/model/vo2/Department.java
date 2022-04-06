@@ -1,20 +1,20 @@
-package com.chun.model.vo;
+package com.chun.model.vo2;
 
 public class Department {
 
-	private String departmentNo;
+	private String dept;
 	private String departmentName;
-	private String category;
-	private char openYN;
+	private Category category;
+	private boolean openYN;
 	private int capacity;
 
 	public Department() {
 		super();
 	}
 
-	public Department(String departmentNo, String departmentName, String category, char openYN, int capacity) {
+	public Department(String departmentNo, String departmentName, Category category, boolean openYN, int capacity) {
 		super();
-		this.departmentNo = departmentNo;
+		this.dept = departmentNo;
 		this.departmentName = departmentName;
 		this.category = category;
 		this.openYN = openYN;
@@ -22,11 +22,11 @@ public class Department {
 	}
 
 	public String getDepartmentNo() {
-		return departmentNo;
+		return dept;
 	}
 
 	public void setDepartmentNo(String departmentNo) {
-		this.departmentNo = departmentNo;
+		this.dept = departmentNo;
 	}
 
 	public String getDepartmentName() {
@@ -37,19 +37,19 @@ public class Department {
 		this.departmentName = departmentName;
 	}
 
-	public String getCategory() {
+	public Category getCategory() {
 		return category;
 	}
 
-	public void setCategory(String category) {
+	public void setCategory(Category category) {
 		this.category = category;
 	}
 
-	public char getOpenYN() {
+	public boolean getOpenYN() {
 		return openYN;
 	}
 
-	public void setOpenYN(char openYN) {
+	public void setOpenYN(boolean openYN) {
 		this.openYN = openYN;
 	}
 
@@ -59,12 +59,6 @@ public class Department {
 
 	public void setCapacity(int capacity) {
 		this.capacity = capacity;
-	}
-
-	@Override
-	public String toString() {
-		return "Department [departmentNo=" + departmentNo + ", departmentName=" + departmentName + ", category="
-				+ category + ", openYN=" + openYN + ", capacity=" + capacity + "]";
 	}
 
 }

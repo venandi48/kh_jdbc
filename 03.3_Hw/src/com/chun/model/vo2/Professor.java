@@ -1,25 +1,25 @@
-package com.chun.model.vo;
+package com.chun.model.vo2;
 
-public class Professor extends ClassProfessor {
+public class Professor {
 
 	private String professorNo;
 	private String professorName;
 	private String professorSsn;
 	private String professorAddress;
-	private String departmentNo;
+	private Department dept;
 
 	public Professor() {
 		super();
 	}
 
 	public Professor(String professorNo, String professorName, String professorSsn, String professorAddress,
-			String departmentNo) {
+			Department dept) {
 		super();
 		this.professorNo = professorNo;
 		this.professorName = professorName;
 		this.professorSsn = professorSsn;
 		this.professorAddress = professorAddress;
-		this.departmentNo = departmentNo;
+		this.dept = dept;
 	}
 
 	public String getProfessorNo() {
@@ -54,18 +54,12 @@ public class Professor extends ClassProfessor {
 		this.professorAddress = professorAddress;
 	}
 
-	public String getDepartmentNo() {
-		return departmentNo;
+	public Department getDept() {
+		return dept;
 	}
 
-	public void setDepartmentNo(String departmentNo) {
-		this.departmentNo = departmentNo;
-	}
-
-	@Override
-	public String toString() {
-		return "Professor [professorNo=" + professorNo + ", professorName=" + professorName + ", professorSsn="
-				+ professorSsn + ", professorAddress=" + professorAddress + ", departmentNo=" + departmentNo + "]";
+	public void setDept(Department dept) {
+		this.dept = dept;
 	}
 
 }
